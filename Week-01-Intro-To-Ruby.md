@@ -44,7 +44,7 @@
   * Bayfield Email list sync
     * Extracted parent emails from PowerSchool and built email lists for the parents of
       each grade level (9thGradeParents@bayfield.k12.co.us)
-* Easy to read syntax. Can do a lot more with a single line of code than other languates
+* Easy to read syntax. Can do a lot more with a single line of code than other languages
 
 ```
 5.times do
@@ -134,4 +134,111 @@ sparky.speak
     action@durango-instructor-rails-76891:~$ ruby hello.rb
     Hello Ruby
     ```
+8. Reading input
+
+    ```
+    puts "What is your name?"
+    
+    name = gets
+    
+    puts "Hi " + name
+    ```
+
+9. Show string interpolation
+10. Calculator
+    
+    ```
+    puts "First number"
+    a = gets
+    
+    puts "Second Number"
+    b = gets
+    
+    puts "#{a} + #{b} = #{ a + b}"
+    ```
+    1. Inspect A and B
+    2. a.to_i
+11. Data types
+    * String
+    * Integer
+    * Float
+  
+12. If statements
+    
+    ```
+    puts "Enter a number"
+    
+    num = gets.to_i
+    
+    if num.even?
+      puts "Even"
+    else
+      puts "Odd"
+    end  
+    
+    ```
+    * Irb
+    * 4.methods
+    * Show ruby docs
+    
+    ```
+    puts "Guess pop or soda?"
+    word = gets
+    
+    word = word.rstrip # or word.rstrip!
+    
+    if word == "pop"
+      puts "You chose right"
+    else
+      puts "You chose wrong"
+    end
+    ```
+    
+    * Show
+    
+13. Arrays
+
+    ```
+    languages= ["Ruby", "Python", "Javascript"]
+    
+    puts languages.length
+    
+    puts languages[0]
+    puts languages[2]
+    
+    languages << "English"
+    
+    puts languages
+    
+    ```
+    * Show Array Ruby Docs http://ruby-doc.org/core-2.0.0/Array.html
+ 
+14. Loops
+
+    ```
+    # I know Ruby
+    
+    languages= ["Ruby", "Python", "Javascript"]
+    
+    language.each do |language|
+      puts "I know #{Ruby}"
+    end
+    ``` 
+   
+15. Hash
+
+    ```
+    altitude = { "Seattle" => 0, "Denver" => 6512, "Minneapolis" => 841}
+    
+    puts altitude["Seattle"]
+    ```
+    
+## Homework assignment
+
+* Palendrome finder
+  * Check to see if a string is the same forwards and backwards
+  * Look at string ruby docs to see if there is a method to reverse a string (http://ruby-doc.org/core-2.0.0/String.html)
+  * print out a message if a word is a palendrome
+
+
 
