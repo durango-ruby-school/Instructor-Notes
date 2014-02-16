@@ -106,15 +106,101 @@ Could also downcase to do a case insensitive match.
       result = is_palendrome? "Fred"
       print_palendrome_message result
     ```
+* Hash arguments
+
+    ```
+    def print_palendrome_message(palendrome_status, options={})
+      # Implementation here
+    end
+
+    result = is_palendrome? "Fred"
+    print_palendrome_message result, success: "Yep", failure: "Nope"
+    # Same as print_palendrome_message(result, {success: "Yep", failure: "Nope"})
+   ```
 * Detour into hashes, symbols and default values
+    * Symbols - simple strings. Mainly used for hash keys
+
+        ```
+        string_hash = { "name" => "Fred", "age" => 35 }
+        string_hash["name"]
+
+        symbol_hash = { :name => "Fred", :age => 35 }
+        symbol_hash[:name]
+
+        # Ruby 1.9+ hash syntax
+        {name: "Fred", age: 35}
+
+        ```
+     * Comparisons
+
+        ```
+        def is_chosen?(person)
+          if person[:name] == "Fred" || person[:age] > 30
+            true
+          else
+            false
+          end
+        end
+
+        is_chosen? {name: "Fred", age: 28 } #=> true
+        is_chosen? {name: "George", age: 58 } #=> true
+        is_chosen? {name: "Amy", age: 22 } # false
+
+        # Can rewrite method to
+        def is_chosen?(person)
+          name == "Fred" || age > 30
+        end
+
+        ```
+        * Logical Operators
+            * && - And - both values have to be true. If first value is false, it doesn't try the second comparison
+            * || - Or - one of the values has to be true. If the first value is true, it doesn't try the rest.
+            * ! - Not
+        * Use parenthesis for grouping
+        * [Comparison cheat sheet](http://www.tutorialspoint.com/ruby/ruby_operators.htm)
+     * Truthy or falsey
+
+        ```
+        def truthy_or_falsey(value)
+          if value
+            "truthy"
+          else
+            "falsey"
+          end
+        end
+
+        puts truthy_or_falsey nil
+        ```
+        * Truthy - "word", "", [], 0, true
+        * Falsey - nil, false
+     * Default hash values
+
+        ```
+        fred = {name: "Fred", age: 35, knows_html: false }
+        james = {name: "James", age: 24, job: "Lead developer" }
+
+        fred[:job] #=> nil
+
+        fred[:job] || "No job given" #=> "No job given"
+
+        fred[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
+
+        james[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
+
+        james.fetch(:knows_html){ "No information provided" }
+
+        ```
 * Hash arguments
 
     ```
     def print_palendrome_message(palendrome_status, options={})
       success_message = options[:success] || "Yep"
 
+      #Another version of default assignment
       failure_message = options[:failure]
-      failure_message ||= "Nope"
+      failure_message ||= "Nope"  # Sames as failure_message = failure_message || "Nope"
+
+      # Could also use failure_message = options.fetch(:failure){ "Nope" }
 
       if palendrome_status
         puts success_message
@@ -123,8 +209,8 @@ Could also downcase to do a case insensitive match.
       end
     end
 
-    result = is_palendrome? "Fred", success: "Yep", failure: "Nope"
-    print_palendrome_message result
+    result = is_palendrome? "Fred"
+    print_palendrome_message result, success: "Yep", failure: "Nope"
    ```
 
 
