@@ -1,12 +1,4 @@
-# Week 2 - Intermediate Ruby
-
-## Topic Ideas
-* Gems
-* Bundler
-* Methods
-  * Calling with and without parenthesis
-* Classes/Objects
-* Modules?
+# Week 2 - Intermediate Ruby and Git
 
 ## Questions from homework?
 
@@ -25,7 +17,7 @@ end
 
 Could also downcase to do a case insensitive match.
 
-## Moving on
+## More Ruby
 
 ### Methods
 
@@ -430,6 +422,54 @@ Could also downcase to do a case insensitive match.
   summaries = [book_1, coffee, book_2].collect(&:summary)
   ```
 
+## Unix commands
+
+* Common unix commands
+    * cd - change dir
+    * mkdir - make a directory
+    * rm - remove file or directory
+    * touch - create a blank file
+    * cat - print out a file
+    * man - man pages for a command
+    
+* ~ Your home directory
+  
+## Git
+
+* Version control system
+* Let's you track the changes you've made and allows rolling back easily
+* Used by github, Heroku.
+
+```
+git clone https://github.com/durango-ruby-school/Instructor-Notes.git
+cd Instructor-Notes
+
+git log
+
+git checkout -b test
+
+edit file
+
+git status
+
+git add .
+
+git commit -m "A test commit"
+
+git log
+
+git checkout master
+
+git merge test
+
+cd ..
+
+rm -r Instructor-Notes
+
+```
+
+
 
 ## Homework
 * Thoughtbot Intro to Rails - Advanced Ruby workshop
+* Code School's Try Git
