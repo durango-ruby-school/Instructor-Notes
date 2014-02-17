@@ -6,6 +6,7 @@
 * Methods
   * Calling with and without parenthesis
 * Classes/Objects
+* Modules?
 
 ## Questions from homework?
 
@@ -190,7 +191,7 @@ Could also downcase to do a case insensitive match.
         james.fetch(:knows_html){ "No information provided" }
 
         ```
-* Hash arguments
+* Bringing it all together
 
     ```
     def print_palendrome_message(palendrome_status, options={})
@@ -214,14 +215,220 @@ Could also downcase to do a case insensitive match.
    ```
 
 
-### Objects
+### Objects and classes
+* Class
+    * Template for building an object
+    * Defines what methods are available
+    * Look at [String documentation](http://www.ruby-doc.org/core-2.0.0/String.html)
+* Object
+    * Instance of a class
+    * Usually created by class.new
+    * Everything is an object. Objects have methods and a class
 
-### Classes
-* Template for building an object.
-* Defines what methods
+        ```
+        "Hello world".class # => String
+        "Hello world".class.class # => Class
 
-* Duck Typing
+        "Hello world".methods #=> [:<=>, :==, :===, :eql?, :hash, :casecmp, ...]
+        ```
+    * Constructors
 
+        ```
+        a = Array.new 5
+        puts a.inspect #=> [nil, nil, nil, nil, nil]
+
+        b = ["javasript", "ruby"] # This is a "literal". It also creates a new array, but that is done by ruby
+        ```
+
+* Creating our own classes (Bookstore App)
+    * First try (using hashes)
+
+        ```
+        book_1 = {title: "Programming Ruby", pages: 360}
+
+        ```
+        * no guarentee that pages any of the fields will be defined
+        * What if you wanted to add a generated summary?
+    * Using a class
+
+        ```
+        class Book
+
+          def initialize(title, pages)
+            @title = title
+            @pages = pages
+          end
+
+          def title
+            @title
+          end
+
+          def pages
+            @pages
+          end
+
+        end
+
+        book_1 = Book.new "Programming Ruby", 360
+
+        puts book_1.name #=> "Programming Ruby"
+        puts book_1.pages #=> 360
+        ```
+     * Adding generated data
+
+        ```
+        class Book
+
+          # Previous implementation omitted
+
+          def summary
+            "#{title}" is #{pages} pages
+          end
+
+        end
+
+        book_1 = Book.new "Programming Ruby", 360
+
+        puts book_1.summary #=> "Programming Ruby is 360 pages"
+        ```
+     * Assignment methods
+
+        ```
+        class Book
+
+          # Previous implementation omitted
+
+          def pages=(value)
+            @pages = value
+          end
+
+        end
+
+        book_1 = Book.new "Programming Ruby", 360
+
+        puts book_1.summary #=> "Programming Ruby is 360 pages"
+
+        book_1.pages = 241
+        puts book_1.summary #=> "Programming Ruby is 241 pages"
+        ```
+     * Generating getters and setters
+
+        ```
+        class Book
+          def initialize(title, pages)
+            @title = title
+            @pages = pages
+          end
+
+          def title
+            @title
+          end
+
+          def title=(value)
+            @title = value
+          end
+
+          def pages
+            @pages
+          end
+
+          def pages=(value)
+            @pages = value
+          end
+
+          def summary
+            "#{title} is #{pages} pages"
+          end
+        end
+
+        # Can be replaced with
+
+        class Book
+          attr_accessor :title, :pages
+
+          def initialize(title, pages)
+            @title = title
+            @pages = pages
+          end
+
+          def summary
+            "#{title} is #{pages} pages"
+          end
+        end
+        ```
+        * Show module, attr_reader, attr_writer, attr_accessor
+
+
+    * Class vs instance methods
+        * Show Array API Docs
+        * :: are class methods
+        * \# are instance methods
+
+        ```
+        a = Array.new(3) #=> [nil, nil, nil]
+        a.length => 3
+
+        a.new #=> NoMethodError: undefined method `new' for [nil, nil, nil]:Array
+        Array.length #=> NoMethodError: undefined method `length' for Array:Class
+        ```
+    * Duck Typing
+        * If it quacks like a duck, it must be a duck
+
+        ```
+        class Book
+          attr_accessor :title, :pages
+
+          def initialize(title, pages)
+            @title = title
+            @pages = pages
+          end
+
+          def summary
+            "#{title} is #{pages} pages"
+          end
+        end
+
+        class Drink
+          attr_accessor :brand, :size
+
+          def initialize(brand, size)
+            @brand = brand
+            @size
+          end
+
+          def summary
+            "#{size} #{brand}"
+          end
+        end
+
+        book_1 = Book.new "War, what is it good for", 360
+        book_2 = Book.new "The Bible", 2500
+        drink = Drink.new "Coke", "8 oz"
+
+        [book_1, coffee, book_2].each do |item|
+          puts item.summary
+        end
+        ```
+    * Inheritance
+
+        ```
+        class Coffee < Drink
+          def summary
+            "Hot #{size} #{brand} coffee"
+          end
+        end
+        ```
+
+* Collecting summaries in a single array
+
+  ```
+  summaries = [book_1, coffee, book_2].collect do |item|
+    item.summary
+  end
+
+  # Shorthand
+  summaries = [book_1, coffee, book_2].collect(&:summary)
+  ```
 
 
 ## Homework
