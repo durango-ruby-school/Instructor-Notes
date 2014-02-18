@@ -176,11 +176,10 @@ Could also downcase to do a case insensitive match.
 
         fred[:job] || "No job given" #=> "No job given"
 
-        fred[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
+        james[:knows_html] || "No information provided"  #=> "No information provided"
+        james[:knows_html] || "No information provided"  #=> "No information provided"
 
-        james[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
-
-        james.fetch(:knows_html){ "No information provided" }
+        james.fetch(:knows_html){ "No information provided" } #=> false
 
         ```
 * Bringing it all together
@@ -431,9 +430,9 @@ Could also downcase to do a case insensitive match.
     * touch - create a blank file
     * cat - print out a file
     * man - man pages for a command
-    
+
 * ~ Your home directory
-  
+
 ## Git
 
 * Version control system
