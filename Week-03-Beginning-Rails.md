@@ -3,10 +3,14 @@
 ## Topic ideas
 * Gems
 * Bundler
+* Git
+* Deploying to heroku
+* HTML
+* CSS
 
-## Unix Command Line
-
-* Syntax
-* Renaming Files
 
 ## New Rails Project
+
+
+## HTML/CSS
+Use high voltage gem for HTML experimenting
