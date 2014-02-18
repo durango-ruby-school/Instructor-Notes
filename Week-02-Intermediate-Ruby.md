@@ -176,11 +176,11 @@ Could also downcase to do a case insensitive match.
 
         fred[:job] || "No job given" #=> "No job given"
 
-        fred[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
+        p james[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
 
-        james[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
+        p fred[:knows_html] || "Doesn't know html"  #=> "Doesn't know html"
 
-        james.fetch(:knows_html){ "No information provided" }
+        p james.fetch(:knows_html){ "No information provided" }
 
         ```
 * Bringing it all together
