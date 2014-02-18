@@ -436,7 +436,7 @@ Could also downcase to do a case insensitive match.
   
 ## Git
 
-* Version control system
+* Distributed Version Control System (DVCS)
 * Let's you track the changes you've made and allows rolling back easily
 * Used by github, Heroku.
 
@@ -448,7 +448,7 @@ git log
 
 git checkout -b test
 
-edit file
+edit README
 
 git status
 
@@ -458,13 +458,9 @@ git commit -m "A test commit"
 
 git log
 
-git checkout master
+git push origin <BRANCHNAME>
 
-git merge test
-
-cd ..
-
-rm -r Instructor-Notes
+Login to git and make pull request
 
 ```
 
