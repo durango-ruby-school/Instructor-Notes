@@ -3,7 +3,7 @@
 ## Installing Rails
 
 ```
-$ gem install -v 3.2.17
+$ gem install rails -v 3.2.17
 
 ```
 
@@ -25,7 +25,7 @@ $ cd first_site
     2. Show how gem is just a method call
     3. Talk about bundle exec
 2. Start up server with `bundle exec rails server`
-3. git init, git commit 
+3. git init, git commit
 
 ## HTML/CSS
 
@@ -34,13 +34,13 @@ See Slides
 ## Creating a Rails page
 
 1. Create the pages controller in app/controllers/pages_controller.rb
-    
+
     ```
     class PagesController < ApplicationController
-    
+
       def home
       end
-      
+
     end
     ```
 2. Go into config/routes.rb and make it look like this:
@@ -66,9 +66,9 @@ See Slides
       <div>
         My cool header
       </div>
-    
+
       <%= yield %>
-        
+
       <div>
         My cool footer
       </div>
@@ -76,25 +76,25 @@ See Slides
     ```
 9. Set up root url
     1. Delete public/index.html
-    2. Set up root route    
+    2. Set up root route
     ```
     FirstSite::Application.routes.draw do
       get "/about" => "pages#about"
       root to: "pages#home"
     end
     ```
-    
+
 ## ERB
 
 Embedded Ruby
 
 * Output Tag
-  
+
   ```
   <%= Time.now %>
   ```
 * Loops
-  
+
   ```
   <ul>
     <% %w(dog cat mouse).each do |animal| %>
@@ -132,18 +132,18 @@ Embedded Ruby
     <% if @name %>
     <p>Hello <%= @name %>
     <% end %>
-    
+
     <form>
       <label>Name</label>
       <input type="input" name="name" />
-      
+
       <input type="submit" />
     </form>
     ```
 
 
 
-## Boostrap
+## Boostrap (not covered, ran out of time)
 
 https://github.com/twbs/bootstrap-sass
 
@@ -187,7 +187,7 @@ https://github.com/twbs/bootstrap-sass
     ```
       <div class="navbar navbar-default">
         <a href="/" class="navbar-brand">Durango Ruby School</a>
-        
+
         <p class="navbar-text navbar-right">Signed in as Aaron Renner</p>
       </div>
     ```
