@@ -197,6 +197,13 @@ and how they should work inside of the application.
     <p>Pages: <%= @book.pages %></p>
     ```
 
+12. Git commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Displaying books"
+    ```
+
 ### Creating Books
 
 1. Create a new link on the index page
@@ -232,7 +239,7 @@ and how they should work inside of the application.
         <%= f.label :pages %>
         <%= f.text_field :pages %>
       </div>
-      <%= f.submit "Create Book" %>
+      <%= f.submit %>
     <% end %>
     ```
 5. Create a POST create route
@@ -253,6 +260,13 @@ and how they should work inside of the application.
       @book.save
       redirect_to "/books"
     end
+    ```
+
+7. Git Commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Add books action"
     ```
 
 ### Editing Books
@@ -296,7 +310,7 @@ and how they should work inside of the application.
         <%= f.label :pages %>
         <%= f.text_field :pages %>
       </div>
-      <%= f.submit "Edit Book" %>
+      <%= f.submit %>
     <% end %>
     ```
 
@@ -322,6 +336,12 @@ and how they should work inside of the application.
       @book.update_attributes params[:book]
       redirect_to "/books/#{@book.id}"
     end
+    ```
+7. Git commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Update books action"
     ```
 
 ### Deleting books
@@ -354,3 +374,243 @@ and how they should work inside of the application.
     end
     ```
 
+4. Git commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Destroy books action"
+    ```
+
+## Cleaning Up
+
+### Resource Routes
+
+config/routes.rb can be changed to
+
+```ruby
+Bookstore::Application.routes.draw do
+  resources :books
+end
+```
+
+### Path Helpers
+
+```bash
+$ rake routes
+
+    books GET    /books(.:format)          books#index
+          POST   /books(.:format)          books#create
+ new_book GET    /books/new(.:format)      books#new
+edit_book GET    /books/:id/edit(.:format) books#edit
+     book GET    /books/:id(.:format)      books#show
+          PUT    /books/:id(.:format)      books#update
+          DELETE /books/:id(.:format)      books#destroy
+
+```
+
+First column is the name of the path helper. Can be accessed like `new_book_path` or `new_book_url`.
+
+* Use path unless you need the absolute url.
+* Path helpers are automatically set up by `resources :books`
+
+#### Updates to use path helpers
+
+1. app/views/books/index.html
+
+    ```
+    <h1>Books</h1>
+
+    <%= link_to "New Book", new_book_path %>
+
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Pages</th>
+      </tr>
+      <% @books.each do |book| %>
+        <tr>
+          <td><%= link_to book.name, book_path(book) %></td>
+          <td><%= book.pages %></td>
+        </tr>
+      <% end %>
+    </table>
+    ```
+2. app/views/books/show.html.erb
+
+    ```
+    <h1><%= @book.name %></h1>
+
+    <%= link_to "Edit", edit_book_path(@book) %>
+    <%= link_to "Delete", book_path(@book), method: :delete %>
+
+    <p>Pages: <%= @book.pages %></p>
+
+    <!-- New link -->
+    <%= link_to "Back to all books", books_path %>
+    ```
+
+3. app/views/books/edit.html.erb
+
+    ```
+    <%= form_for @book do |f| %>
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div>
+        <%= f.label :pages %>
+        <%= f.text_field :pages %>
+      </div>
+      <%= f.submit "Edit Book" %>
+    <% end %>
+    ```
+
+4. app/controllers/books_controller.rb
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+        @books = Book.all
+      end
+
+      def show
+        @book = Book.find params[:id]
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def create
+        @book = Book.new params[:book]
+        @book.save
+        redirect_to books_path # Changed line
+      end
+
+      def edit
+        @book = Book.find params[:id]
+      end
+
+      def update
+        @book = Book.find params[:id]
+        @book.update_attributes params[:book]
+        redirect_to book_path(@book) # Changed line
+      end
+
+      def destroy
+        @book = Book.find params[:id]
+        @book.destroy
+        redirect_to books_path # Changed line
+      end
+    end
+    ```
+
+5. git commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Books resource route and path helpers"
+    ```
+
+### Extracting a form partial
+
+1. Show duplication between app/views/books/new.html.erb and app/views/books/edit.html.erb
+2. Create app/views/books/_form.html.erb
+
+    ```
+    <%= form_for @book do |f| %>
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div>
+        <%= f.label :pages %>
+        <%= f.text_field :pages %>
+      </div>
+      <%= f.submit %>
+    <% end %>
+    ```
+3. Update app/views/books/new.html.erb and app/views/books/edit.html.erb
+
+    ```
+    <%= render partial: "form" %>
+    ```
+4. Git commit
+
+    ```bash
+    $ git add .
+    $ git commit -m "Extract book form partial"
+    ```
+
+
+### Adding a Book summary field (Alexii)
+
+1. Create a migration
+
+    ```bash
+    $ rails generate migration add_summary_to_books summary:text
+    ```
+
+2. Show migration file. Talk about why text instead of string
+3. Migrate the database
+
+    ```bash
+    $ rake db:migrate
+    ```
+4. Restart the server `bundle exec rails s`
+5. Update app/views/books/_form.html.erb
+
+    ```
+    <%= form_for @book do |f| %>
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div>
+        <%= f.label :pages %>
+        <%= f.text_field :pages %>
+      </div>
+      <div>
+        <%= f.label :summary %>
+        <%= f.text_area :summary %>
+      </div>
+      <%= f.submit %>
+    <% end %>
+    ```
+6. Try to submit, see Mass assignment security error
+7. Update app/models/book.rb
+
+    ```ruby
+    class Book < ActiveRecord::Base
+      attr_accessible :name, :pages, :summary
+    end
+    ```
+8. Render summary on app/models/show.html.erb
+
+    ```
+    <h1><%= @book.name %></h1>
+
+    <%= link_to "Edit", edit_book_path(@book) %>
+    <%= link_to "Delete", book_path(@book), method: :delete %>
+
+    <p>Pages: <%= @book.pages %></p>
+
+    <%= @book.summary %>
+
+    <%= link_to "Back to all books", books_path %>
+    ```
+
+9. Use simple_format view helper to include line breaks
+
+    ```
+    <h1><%= @book.name %></h1>
+
+    <%= link_to "Edit", edit_book_path(@book) %>
+    <%= link_to "Delete", book_path(@book), method: :delete %>
+
+    <p>Pages: <%= @book.pages %></p>
+
+    <p><%= simple_format @book.summary %></p>
+
+    <%= link_to "Back to all books", books_path %>
+    ```
