@@ -45,7 +45,7 @@ and how they should work inside of the application.
 2. Create a book model
 
     ```bash
-    $ rails generate model book name, pages:integer
+    $ rails generate model Book name:string page_id:integer
     ```
 3. Look at generated files
     * comment out attr_accessible for the time being
