@@ -1,4 +1,4 @@
-# Week 5 - Deploying to heroku
+# Deploying to heroku
 
 ## Setting up Postgres
 http://help.nitrous.io/postgresql/
