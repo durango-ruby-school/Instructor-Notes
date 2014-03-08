@@ -1,6 +1,6 @@
 # Week 5 - Controllers
 
-## Review named routes
+### Review of named routes
 
 ```bash
 $ rake routes
@@ -119,6 +119,26 @@ Anywhere you use book_path, you can just pass in the object
 
     ```bash
     $ rake db:migrate
+    ==  AddSummaryToBooks: migrating ==============================================
+    -- add_column(:books, :summary, :text)
+       -> 0.0008s
+    ==  AddSummaryToBooks: migrated (0.0009s) =====================================
+
+    ```
+4. Show rollback functionality
+    ```bash
+    $ rake db:rollback
+    ==  AddSummaryToBooks: reverting ==============================================
+    -- remove_column("books", :summary)
+       -> 0.0246s
+    ==  AddSummaryToBooks: reverted (0.0248s) =====================================
+
+    $ rake db:migrate
+    ==  AddSummaryToBooks: migrating ==============================================
+    -- add_column(:books, :summary, :text)
+       -> 0.0008s
+    ==  AddSummaryToBooks: migrated (0.0009s) =====================================
+
     ```
 4. Restart the server `bundle exec rails s`
 5. Update app/views/books/_form.html.erb
@@ -177,3 +197,17 @@ Anywhere you use book_path, you can just pass in the object
 
     <%= link_to "Back to all books", books_path %>
     ```
+
+### Adding reviews
+
+1. Generate review model
+
+  ```bash
+  $ rails generate model review name:string rating:integer body:text book:belongs_to
+  ```
+2. Show migration and model
+3. Migrate the database
+
+  ```bash
+  $ rake db:migrate
+  ```
