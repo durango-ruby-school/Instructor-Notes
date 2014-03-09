@@ -386,3 +386,71 @@ See slides
     ```
 
 ## Nested Routes
+
+This will allow us to visit /books/1/reviews/3
+
+1. app/views/books/show.html.erb
+
+    ```
+    <h1><%= @book.name %></h1>
+
+    <%= link_to "Edit", edit_book_path(@book) %> |
+    <%= link_to "Delete", book_path(@book), method: :delete, data:{confirm: "Are you sure?"} %>
+    <p>Pages: <%= @book.pages %></p>
+
+    <%= simple_format @book.summary %>
+
+    <%= link_to "All Books", books_path %>
+
+    <h3>Reviews</h3>
+    <% @reviews.each do |review| %>
+      <div>
+        <%= simple_format review.body %>
+        <%= link_to [@book, review], style:"font-style: italic; display: block;" do %>
+          <%= review.name %> gave this book a <%= review.rating %> star rating.
+        <% end %>
+      </div>
+    <% end %>
+    ```
+2. config/routes.rb
+
+    ```ruby
+    Bookstore::Application.routes.draw do
+      resources :books do
+        resources :reviews, only: [:show]
+      end
+    end
+    ```
+3. Look at routes
+
+    ```
+    $ rake routes
+    book_review GET    /books/:book_id/reviews/:id(.:format) reviews#show
+          books GET    /books(.:format)                      books#index
+                POST   /books(.:format)                      books#create
+       new_book GET    /books/new(.:format)                  books#new
+      edit_book GET    /books/:id/edit(.:format)             books#edit
+           book GET    /books/:id(.:format)                  books#show
+                PUT    /books/:id(.:format)                  books#update
+                DELETE /books/:id(.:format)                  books#destroy
+    ```
+
+4. Create reviews controller (app/controllers/reviews_controller.rb)
+
+    ```ruby
+    class ReviewsController < ApplicationController
+      def show
+        @book = Book.find params[:book_id]
+        @review = @book.reviews.find params[:id]
+      end
+    end
+    ```
+5. Create view (app/views/reviews/show.html.erb)
+
+    ```
+    <h1>Review #<%= @review.id %> for <%= link_to @book.name, @book %></h1>
+
+    <p><%= @review.name %> gave this book <%= @review.rating %> stars</p>
+
+    <%= simple_format @review.body %>
+    ```
