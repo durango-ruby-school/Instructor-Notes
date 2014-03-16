@@ -1,6 +1,8 @@
 # Week 6 - Nested Controllers, Forms and Validations
 
-## Nested forms
+## Nested Resources (continued)
+
+### New Reviews
 
 1. Add a new review link on app/views/reviews/show.html.erb
 
@@ -98,7 +100,7 @@
 
       def create
         @book = Book.find params[:book_id]
-        @review = @book.reviews.create params[:book]
+        @review = @book.reviews.create params[:review]
         @review.save
         redirect_to [@book, @review]
       end
@@ -114,7 +116,7 @@
 
     ```ruby
     class ReviewsController < ApplicationController
-      before_filter :load_book
+      before_filter :find_book
 
       def show
         @review = @book.reviews.find params[:id]
@@ -132,7 +134,7 @@
 
       private
 
-      def load_book
+      def find_book
         @book = Book.find params[:book_id]
       end
     end
@@ -143,3 +145,135 @@
     git add .
     git commit -m "Extract book loading to before filter"
     ```
+
+### Editing Reviews
+
+1. Create an edit link in app/views/reviews/show.html.erb
+
+    ```
+    <h1>Review #<%= @review.id %> for <%= link_to @book.name, @book %></h1>
+
+    <p><%= @review.name %> gave this book <%= @review.rating %> stars</p>
+
+    <%= simple_format @review.body %>
+
+    <%= link_to "Edit", edit_book_review_path(@book, @review) %>
+    ```
+2. Add edit route to config/routes.rb
+
+    ```ruby
+    Bookstore::Application.routes.draw do
+      resources :books do
+        resources :reviews, only: [:show, :new, :create, :edit]
+      end
+    end
+    ```
+3. Add edit action to app/controllers/reviews_controller.rb
+
+    ```ruby
+    def edit
+      @review = @book.reviews.find params[:id]
+    end
+    ```
+4. Add app/views/edit.html.erb
+
+    ```
+    <%= render "form" %>
+    ```
+5. Move contents of app/views/reviews/new.html into app/views/reviews/_form.html.erb
+
+    ```
+    <%= form_for [@book, @review] do |f| %>
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div>
+        <%= f.label :rating %>
+        <%= f.text_field :rating %>
+      </div>
+      <div>
+        <%= f.label :body %>
+        <%= f.text_area :body %>
+      </div>
+
+      <%= f.submit %>
+    <% end %>
+    ```
+6. Edit app/views/new.html.erb
+
+    ```
+    <%= render "form" %>
+    ```
+7. Create update route in config/routes.rb
+
+    ```ruby
+    Bookstore::Application.routes.draw do
+      resources :books do
+        resources :reviews, only: [:show, :new, :create, :edit, :update]
+      end
+    end
+    ```
+8. Create update action in app/controllers/reviews_controller.rb
+
+    ```ruby
+    def update
+      @review = @book.reviews.find params[:id]
+      @review.update_attributes params[:review]
+      redirect_to [@book, @review]
+    end
+    ```
+
+9. Commit
+
+    ```bash
+    git add .
+    git commit -m "Edit reviews"
+    ```
+
+### Deleting a review
+
+1. Add a delete link to app/views/reviews/show.html.erb
+
+    ```
+    <h1>Review #<%= @review.id %> for <%= link_to @book.name, @book %></h1>
+
+    <p><%= @review.name %> gave this book <%= @review.rating %> stars</p>
+
+    <%= simple_format @review.body %>
+
+    <%= link_to "Edit", edit_book_review_path(@book, @review) %> |
+    <%= link_to "Delete", book_review_path(@book, @review), method: :delete, data: {confirm: "Are you sure?"} %>
+    ```
+2. Add the destroy route to config/routes.rb
+
+    ```ruby
+    Bookstore::Application.routes.draw do
+      resources :books do
+        resources :reviews, only: [:show, :new, :create, :edit, :update, :destroy]
+      end
+    end
+    ```
+3. Add the destroy action to app/controllers/reviews_controller.rb
+
+    ```ruby
+    def destroy
+      @review = @book.reviews.find params[:id]
+      @review.destroy
+      redirect_to @book
+    end
+    ```
+4. Commit
+
+    ```bash
+    git add .
+    git commit -m "Delete reviews"
+    ```
+
+
+
+
+
+Also, maybe talk about cascade delete
+Validations,
+Form Builder
