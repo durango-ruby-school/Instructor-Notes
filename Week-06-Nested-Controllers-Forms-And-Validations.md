@@ -504,7 +504,7 @@
       <%= f.input :rating %>
       <%= f.input :body %>
 
-      <%= f.submit %>
+      <%= f.submit, class: "btn btn-primary"%>
     <% end %>
     ```
 4. Commit
@@ -535,6 +535,26 @@
       <%= f.input :rating, as: :select, collection: 1..5 %>
       <%= f.input :body %>
 
-      <%= f.submit %>
+      <%= f.submit, class: "btn btn-primary" %>
     <% end %>
     ```
+3. Commit
+
+    ```bash
+    git add .
+    git commit -m "Rating is now a dropdown"
+    ```
+
+## Destroy related reviews when deleting books
+
+1. Update app/views/book.rb
+
+```ruby
+class Book < ActiveRecord::Base
+  has_many :reviews, dependent: :destroy
+  attr_accessible :name, :pages, :summary
+
+  validates_presence_of :name
+  validates_numericality_of :pages, greater_than: 0, allow_blank: true
+end
+```
