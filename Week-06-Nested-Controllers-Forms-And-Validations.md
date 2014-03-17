@@ -100,7 +100,7 @@
 
       def create
         @book = Book.find params[:book_id]
-        @review = @book.reviews.create params[:review]
+        @review = @book.reviews.new params[:review]
         @review.save
         redirect_to [@book, @review]
       end
@@ -373,13 +373,168 @@
       validates_numericality_of :pages, greater_than: 0, allow_blank: true
     end
     ```
+6. Commit
 
-## Inline error messages
+    ```bash
+    git add .
+    git commit -m "Added book validations"
+    ```
+
+## Inline error messages and form builder
+
+1. Add simple_form to the Gemfile.
+
+    ```ruby
+    gem 'simple_form', '~> 2.1.1'
+    ```
+2. Install gem
+
+    ```bash
+    bundle install
+    ```
+3. Run simple form install generator
+
+    ```bash
+    rails generate simple_form:install
+    ```
+4. Update app/views/books/_form.html.erb
+
+    ```
+    <%= simple_form_for @book do |f| %>
+      <%= f.input :name %>
+      <%= f.input :pages %>
+      <%= f.input :summary %>
+
+      <%= f.submit %>
+    <% end %>
+    ```
+5. Commit
+
+    ```bash
+    git add .
+    git commit -m "Added simple form"
+    ```
+
+## Adding bootstrap
+
+1. Add the bootstrap-sass gem to the Gemfile (in the assets group)
+
+    ```ruby
+    gem 'bootstrap-sass', '~> 2.1.1.0'
+    ```
+2. Bundle install
+
+    ```bash
+    bundle install
+    ```
+3. Rename app/assets/stylesheets/application.css to app/assets/stylesheets/application.css.scss
+    ```
+    git mv app/assets/stylesheets/application.css app/assets/stylesheets/application.css.scss
+    ```
+4. Import bootstrap in app/assets/stylesheets/application.css.scss
+
+    ```scss
+    @import "bootstrap";
+    ```
+5. Reinstall simple form with bootstrap support
+
+    ```bash
+    rails generate simple_form:install --bootstrap
+    ```
+6. Style the form buttons app/views/books/_form.html.erb
+
+    ```
+    <%= simple_form_for @book do |f| %>
+      <%= f.input :name %>
+      <%= f.input :pages %>
+      <%= f.input :summary %>
+
+      <%= f.submit class: "btn btn-primary" %>
+    <% end %>
+    ```
+7. Commit
+
+    ```
+    git add .
+    git commit -m "Added bootstrap"
+    ```
+
+## Review validations
+
+1. Update app/controllers/reviews_controller.rb to handle invalid data
+
+    ```ruby
+    def create
+      @review = @book.reviews.new params[:review]
+      if @review.save
+        redirect_to [@book, @review]
+      else
+        render "new"
+      end
+    end
+    ```
+
+    ```ruby
+    def update
+      @review = @book.reviews.find params[:id]
+      if @review.update_attributes params[:review]
+        redirect_to [@book, @review]
+      else
+        render "edit"
+      end
+    end
+    ```
 
 
+2. Make review name, rating, and body required (app/models/review.rb)
 
+    ```ruby
+    class Review < ActiveRecord::Base
+      belongs_to :book
+      attr_accessible :body, :name, :rating
 
+      validates_presence_of :name, :rating, :body
+    end
+    ```
+3. Convert app/views/reviews/_form.html.erb to use simple form
 
-Also, maybe talk about cascade delete
-Validations,
-Form Builder
+    ```
+    <%= simple_form_for [@book, @review] do |f| %>
+      <%= f.input :name %>
+      <%= f.input :rating %>
+      <%= f.input :body %>
+
+      <%= f.submit %>
+    <% end %>
+    ```
+4. Commit
+
+    ```bash
+    git add .
+    git commit -m "Reviews simple form and validations"
+    ```
+
+### Rating as a dropdown
+
+1. Update review model to only allow ratings as integers between 1 and 5
+
+    ```ruby
+    class Review < ActiveRecord::Base
+      belongs_to :book
+      attr_accessible :body, :name, :rating
+
+      validates_presence_of :name, :rating, :body
+      validates_numericality_of :rating, only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 5
+    end
+    ```
+2. Update review form to render ratings as a select menu
+
+    ```
+    <%= simple_form_for [@book, @review] do |f| %>
+      <%= f.input :name %>
+      <%= f.input :rating, as: :select, collection: 1..5 %>
+      <%= f.input :body %>
+
+      <%= f.submit %>
+    <% end %>
+    ```
