@@ -270,6 +270,112 @@
     git commit -m "Delete reviews"
     ```
 
+## Validations
+
+1. Require book name is set. In app/models/book.rb
+
+    ```ruby
+    class Book < ActiveRecord::Base
+      has_many :reviews
+      attr_accessible :name, :pages, :summary
+
+      validates_presence_of :name
+    end
+    ```
+2. Try to create new book without a title in the console
+
+    ```
+    $ rails c
+    Loading development environment (Rails 3.2.17)
+    2.0.0-p247 :001 > book = Book.new
+     => #<Book id: nil, name: nil, pages: nil, created_at: nil, updated_at: nil, summary: nil>
+    2.0.0-p247 :002 > book.save
+       (0.1ms)  begin transaction
+    [deprecated] I18n.enforce_available_locales will default to true in the future. If you really want to skip validation of your locale you can set I18n.enforce_available_locales = f
+    alse to avoid this message.
+       (0.1ms)  rollback transaction
+     => false
+    2.0.0-p247 :003 > book.errors.full_messages
+     => ["Name can't be blank"]
+    2.0.0-p247 :004 > book.name = "War and Peace"
+     => "War and Peace"
+    2.0.0-p247 :005 > book.valid?
+     => true
+    2.0.0-p247 :006 > book.save
+       (0.1ms)  begin transaction
+      SQL (4.9ms)  INSERT INTO "books" ("created_at", "name", "pages", "summary", "updated_at") VALUES (?, ?, ?, ?, ?)  [["created_at", Mon, 17 Mar 2014 00:46:12 UTC +00:00], ["name",
+     "War and Peace"], ["pages", nil], ["summary", nil], ["updated_at", Mon, 17 Mar 2014 00:46:12 UTC +00:00]]
+       (30.5ms)  commit transaction
+     => true
+    2.0.0-p247 :007 >
+    ```
+3. Update app/controllers/books_controller.rb to re-display the form if the create action fails
+
+    ```ruby
+    def create
+      @book = Book.new params[:book]
+      if @book.save
+        redirect_to @book
+      else
+        render 'new'
+      end
+    end
+    ```
+
+    ```ruby
+    def update
+      @book = Book.find params[:id]
+      if @book.update_attributes params[:book]
+        redirect_to @book
+      else
+        render "edit"
+      end
+    end
+    ```
+
+4. Show the errors on the book form (app/views/books/_form.html.erb)
+
+    ```
+    <%= form_for @book do |f| %>
+      <% if @book.errors.any? %>
+      <div class="errors">
+        The form contains <%= pluralize(@book.errors.count, "error") %>.
+         <ul>
+        <% @book.errors.full_messages.each do |msg| %>
+          <li> <%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+      <% end %>
+      <div>
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div>
+        <%= f.label :pages %>
+        <%= f.text_field :pages %>
+      </div>
+      <div>
+        <%= f.label :summary %>
+        <%= f.text_area :summary %>
+      </div>
+      <%= f.submit %>
+    <% end %>
+    ```
+5. Ensure pages greater than 0. (app/models/book.rb)
+
+    ```ruby
+    class Book < ActiveRecord::Base
+      has_many :reviews
+      attr_accessible :name, :pages, :summary
+
+      validates_presence_of :name
+      validates_numericality_of :pages, greater_than: 0, allow_blank: true
+    end
+    ```
+
+## Inline error messages
+
 
 
 
