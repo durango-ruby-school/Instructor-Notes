@@ -372,7 +372,7 @@ Unit Tests - the inside part. Use rspec
 
 11. Create the index action in the pages controller
 
-    ```
+    ```ruby
     class PagesController < ApplicationController
       def index
       end
@@ -381,7 +381,7 @@ Unit Tests - the inside part. Use rspec
 
 12. Run the spec
 
-    ```
+    ```bash
     $ rspec spec/features/view_homepage_spec.rb
     F
 
@@ -407,13 +407,13 @@ Unit Tests - the inside part. Use rspec
 
 13. Create app/views/pages/index.html.erb
 
-    ```
+    ```html
     <h1>Hello</h1>
     ```
 
 14. Run the spec
 
-    ```
+    ```bash
     $ rspec spec/features/view_homepage_spec.rb
     F
 
@@ -436,13 +436,13 @@ Unit Tests - the inside part. Use rspec
 
 15. Edit app/views/pages/index.html.erb
 
-    ```
+    ```html
     <h1>Welcome</h1>
     ```
 
 16. Run the spec
 
-    ```
+    ```bash
     $ rspec spec/features/view_homepage_spec.rb
     F
 
@@ -484,7 +484,7 @@ Unit Tests - the inside part. Use rspec
 
 18. Run the spec
 
-    ```
+    ```bash
     $ rspec spec/features/view_homepage_spec.rb
     .
 
@@ -496,11 +496,889 @@ Unit Tests - the inside part. Use rspec
 
 19. Commit
 
-    ```
+    ```bash
     $ git add .
     $ git commit -m "View homepage feature"
-    ``
+    ```
 
+### Managing Books
+
+1. Write a new spec spec/features/book_management_spec.rb
+
+    ```ruby
+    require "spec_helper"
+    ```
+
+2. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    No examples found.
+
+
+    Finished in 0.00018 seconds
+    0 examples, 0 failures
+
+    Randomized with seed 64289
+    ```
+
+3. Write the following spec
+
+    ```
+    require "spec_helper"
+
+    feature "Book management" do
+      scenario "User manages books" do
+        visit root_path
+
+        click_link "Books"
+        click_link "Add book"
+
+        fill_in "Title", with: "Garfield"
+        fill_in "Pages", with: "250"
+
+        click_button "Save"
+
+        expect(page).to have_content "Garfield"
+        expect(page).to_not have_content "Save"
+      end
+    end
+    ```
+
+4. Run the spec
+
+    ```
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Books"
+         Capybara::ElementNotFound:
+           Unable to find link "Books"
+         # ./spec/features/book_management_spec.rb:7:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.12098 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 59663
+    ```
+
+5. Create the book link in app/views/layouts/application.html.erb
+
+    ```
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Readathon App</title>
+      <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+      <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+      <%= csrf_meta_tags %>
+    </head>
+    <body>
+      <%= link_to "Books", books_path %>
+
+    <%= yield %>
+
+    </body>
+    </html>
+    ```
+
+6. Run the spec
+
+    ```
+    rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: visit root_path
+         ActionView::Template::Error:
+           undefined local variable or method `books_path' for #<#<Class:0x00000003f99ef0>:0x00000003f990b8>
+         # ./app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb___471408764387068500_33711640'
+         # ./spec/features/book_management_spec.rb:5:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.10605 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 26005
+    ```
+
+7. Create the books route in config/routes.rb
+
+    ```ruby
+    Readathon::Application.routes.draw do
+      root 'pages#index'
+
+      resources :books, only: [:index]
+    end
+    ```
+
+8. Run the spec
+
+    ```
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Books"
+         ActionController::RoutingError:
+           uninitialized constant BooksController
+         # ./spec/features/book_management_spec.rb:7:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.11626 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 23749
+    ```
+
+9. Create the books controller (app/controllers/books_controller.rb)
+
+    ```ruby
+    class BooksController < ApplicationController
+    end
+    ```
+
+10. Run the spec
+
+    ```
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Books"
+         AbstractController::ActionNotFound:
+           The action 'index' could not be found for BooksController
+         # ./spec/features/book_management_spec.rb:7:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.11503 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 23501
+    ```
+
+11. Create the index action
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+    end
+    ```
+
+12. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Books"
+         ActionView::MissingTemplate:
+           Missing template books/index, application/index with {:locale=>[:en], :formats=>[:html], :handlers=>[:erb, :builder, :raw, :ruby, :jbuilder, :coffee]}. Searched in:
+             * "/home/action/workspace/readathon/app/views"
+         # ./spec/features/book_management_spec.rb:7:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.11185 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 29838
+    ```
+
+13. Create a blank app/views/books/index.html.erb
+14. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Add book"
+         Capybara::ElementNotFound:
+           Unable to find link "Add book"
+         # ./spec/features/book_management_spec.rb:8:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.10983 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 2364
+    ```
+
+15. Create a an add book link in app/views/books/index.html.erb
+
+    ```
+    <%= link_to "Add book", new_book_path %>
+    ```
+
+16. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Books"
+         ActionView::Template::Error:
+           undefined local variable or method `new_book_path' for #<#<Class:0x00000002ac9188>:0x00000002ad26c0>
+         # ./app/views/books/index.html.erb:1:in `_app_views_books_index_html_erb___2762012422487341792_22495960'
+         # ./spec/features/book_management_spec.rb:7:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.623 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 39019
+    ```
+
+17. Create the new book route in config/routes.rb
+
+    ```ruby
+    Readathon::Application.routes.draw do
+      root 'pages#index'
+
+      resources :books, only: [:index, :new]
+    end
+    ```
+
+18. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Add book"
+         AbstractController::ActionNotFound:
+           The action 'new' could not be found for BooksController
+         # ./spec/features/book_management_spec.rb:8:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.12338 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 4326
+    ```
+
+19. Create the new action in app/controllers/books_controller.rb
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+      end
+    end
+    ```
+
+20. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Add book"
+         ActionView::MissingTemplate:
+           Missing template books/new, application/new with {:locale=>[:en], :formats=>[:html], :handlers=>[:erb, :builder, :raw, :ruby, :jbuilder, :coffee]}. Searched in:
+             * "/home/action/workspace/readathon/app/views"
+         # ./spec/features/book_management_spec.rb:8:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.62012 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 431
+    ```
+
+21. Create an empty app/views/books/new.html.erb
+22. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: fill_in :title, with: "Garfield"
+         Capybara::ElementNotFound:
+           Unable to find field :title
+         # ./spec/features/book_management_spec.rb:10:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.11956 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 4341
+    ```
+
+23. Create the form
+
+    1. Add simpleform to the Gemfile
+
+        ```
+        gem 'simple_form'
+        ```
+
+    2. Bundle install
+
+        ```bash
+        $ bundle install
+        ```
+
+    3. Update app/views/books/new.html.erb
+
+        ```
+        <%= simple_form_for @book do |f| %>
+          <%= f.input :title %>
+          <%= f.input :pages %>
+
+          <%= f.submit "Save" %>
+        <% end %>
+        ```
+
+24. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Add book"
+         ActionView::Template::Error:
+           undefined method `model_name' for NilClass:Class
+         # ./app/views/books/new.html.erb:1:in `_app_views_books_new_html_erb___905899577793093027_28547520'
+         # ./spec/features/book_management_spec.rb:8:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.22834 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 35141
+    ```
+25. Update app/controllers/books_controller.rb
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+    end
+    ```
+
+26. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_link "Add book"
+         NameError:
+           uninitialized constant BooksController::Book
+         # ./app/controllers/books_controller.rb:6:in `new'
+         # ./spec/features/book_management_spec.rb:8:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.11718 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 12632
+    ```
+
+27. Create the book model
+
+    1. Generate the model
+
+        ```bash
+        $ rails g model book title pages:integer
+              invoke  active_record
+              create    db/migrate/20140330223603_create_books.rb
+              create    app/models/book.rb
+              invoke    rspec
+              create      spec/models/book_spec.rb
+        ```
+
+    2. Migrate the database (and setup the test database)
+
+        ```bash
+        $ rake db:migrate db:test:prepare
+        == 20140330223603 CreateBooks: migrating ======================================
+        -- create_table(:books)
+           -> 0.2195s
+        == 20140330223603 CreateBooks: migrated (0.2197s) =============================
+        ```
+
+28. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         ActionController::RoutingError:
+           No route matches [POST] "/books"
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.24519 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 59351
+    ```
+
+29. Update config/routes.rb to have a :create action
+
+    ```ruby
+    Readathon::Application.routes.draw do
+      root 'pages#index'
+
+      resources :books, only: [:index, :new, :create]
+    end
+    ```
+
+30. Run the spec
+
+    ```ruby
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         AbstractController::ActionNotFound:
+           The action 'create' could not be found for BooksController
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.22995 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 42682
+    ```
+
+31. Add the create action to the books controller
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def create
+      end
+    end
+    ```
+
+32. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         ActionView::MissingTemplate:
+           Missing template books/create, application/create with {:locale=>[:en], :formats=>[:html], :handlers=>[:erb, :builder, :raw, :ruby, :jbuilder, :coffee]}. Searched in:
+             * "/home/action/workspace/readathon/app/views"
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.74083 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 1865
+    ```
+
+33. Fill in the create action
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def create
+        @book = Book.new params[:book]
+        if @book.save
+          redirect_to @book
+        else
+          render "new"
+        end
+      end
+    end
+    ```
+
+34. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         ActiveModel::ForbiddenAttributesError:
+           ActiveModel::ForbiddenAttributesError
+         # ./app/controllers/books_controller.rb:10:in `create'
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.73036 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 56075
+    ```
+
+35. Permit the attributes using strong parameters
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def create
+        @book = Book.new book_params
+        if @book.save
+          redirect_to @book
+        else
+          render "new"
+        end
+      end
+
+      private
+
+      def book_params
+        params.require(:book).permit(:title, :pages)
+      end
+    end
+    ```
+
+36. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         NoMethodError:
+           undefined method `book_url' for #<BooksController:0x000000043ae978>
+         # ./app/controllers/books_controller.rb:12:in `create'
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.29652 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 1126
+    ```
+
+37. Add the show route for books in config/routes.rb
+
+    ```ruby
+    Readathon::Application.routes.draw do
+      root 'pages#index'
+
+      resources :books, only: [:index, :new, :create, :show]
+    end
+    ```
+
+38. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         AbstractController::ActionNotFound:
+           The action 'show' could not be found for BooksController
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.75141 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 53799
+    ```
+
+39. Create the show action in app/controllers/books_controller.rb
+
+    ```
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def show
+      end
+
+      def create
+        @book = Book.new book_params
+        if @book.save
+          redirect_to @book
+        else
+          render "new"
+        end
+      end
+
+      private
+
+      def book_params
+        params.require(:book).permit(:title, :pages)
+      end
+    end
+    ```
+
+40. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         ActionView::MissingTemplate:
+           Missing template books/show, application/show with {:locale=>[:en], :formats=>[:html], :handlers=>[:erb, :builder, :raw, :ruby, :jbuilder, :coffee]}. Searched in:
+             * "/home/action/workspace/readathon/app/views"
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.75007 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 35501
+    ```
+
+41. Create an empty app/books/views/show.html.erb
+42. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: expect(page).to have_content "Garfield"
+           expected to find text "Garfield" in "Books"
+         # ./spec/features/book_management_spec.rb:15:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.75184 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 55177
+    ```
+
+43. Fill out app/views/books/show.html.erb
+
+    ```
+    <h1><%= @book.title %><h1>
+
+    <p>This book has <%= @book.pages %></p>
+    ```
+
+44. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    F
+
+    Failures:
+
+      1) Book management User manages books
+         Failure/Error: click_button "Save"
+         ActionView::Template::Error:
+           undefined method `title' for nil:NilClass
+         # ./app/views/books/show.html.erb:1:in `_app_views_books_show_html_erb__3179130953602822843_34063580'
+         # ./spec/features/book_management_spec.rb:13:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.7481 seconds
+    1 example, 1 failure
+
+    Failed examples:
+
+    rspec ./spec/features/book_management_spec.rb:4 # Book management User manages books
+
+    Randomized with seed 34673
+    ```
+
+45. Update the show action in the books controller
+
+    ```ruby
+    class BooksController < ApplicationController
+      def index
+      end
+
+      def new
+        @book = Book.new
+      end
+
+      def show
+        @book = Book.find params[:id]
+      end
+
+      def create
+        @book = Book.new book_params
+        if @book.save
+          redirect_to @book
+        else
+          render "new"
+        end
+      end
+
+      private
+
+      def book_params
+        params.require(:book).permit(:title, :pages)
+      end
+    end
+    ```
+
+46. Run the spec
+
+    ```bash
+    $ rspec spec/features/book_management_spec.rb
+    .
+
+    Finished in 0.74807 seconds
+    1 example, 0 failures
+
+    Randomized with seed 19101
+    ```
+
+47. WooHoo!!! Commit it!
+
+    ```bash
+    $ git add .
+    $ git commit -m "Add book functionality"
+    ```
+
+### Let's see what we built
+
+1. Fire up the server
+
+    ```bash
+    $ bundle exec rails s
+    ```
 
 
 ## Deploying on heroku
@@ -538,6 +1416,4 @@ The heroku toolbelt is already installed on Nitrous by default
     ```
 
 5. Go to http://\<your-initials\>-readathon.herokuapp.com
-
-
 
