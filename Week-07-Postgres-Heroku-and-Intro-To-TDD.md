@@ -16,7 +16,7 @@
     $ parts start postgresql
     ```
 
-    *Will have to run `parts start postgreql` every time you log in to your machine*
+    *Will have to run `parts start postgresql` every time you log in to your machine*
 2. Create a new super user to connect to the db as
 
     ```
@@ -150,7 +150,7 @@
 10. Run rake db:migrate to set up the initial database
 
     ```
-    $ rake db:migreate
+    $ rake db:migrate
     ```
 
 11. Run git status and see that it has generated the initial schema.rb file
