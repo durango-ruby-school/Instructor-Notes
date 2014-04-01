@@ -1414,6 +1414,12 @@ The heroku toolbelt is already installed on Nitrous by default
     ```
     $ git push heroku master
     ```
+    
+5. Migrate the heroku database
 
-5. Go to http://\<your-initials\>-readathon.herokuapp.com
+    ```
+    $ heroku run rake db:migrate
+    ```
+
+6. Go to http://\<your-initials\>-readathon.herokuapp.com
 
